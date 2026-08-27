@@ -1,22 +1,30 @@
 {
   "name": "trust-protocol",
-  "version": "1.0.0",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:sandbox": "wrangler pages dev dist --d1=trust-protocol-production --local --ip 0.0.0.0 --port 3002",
     "build": "vite build",
+    "preview": "wrangler pages dev dist",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:prod": "npm run build && wrangler pages deploy dist --project-name trust-protocol",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:migrate:local": "wrangler d1 migrations apply trust-protocol-production --local",
-    "db:seed": "wrangler d1 execute trust-protocol-production --local --file=seed.sql"
+    "db:migrate:prod": "wrangler d1 migrations apply trust-protocol-production",
+    "db:seed": "wrangler d1 execute trust-protocol-production --local --file=./seed.sql",
+    "db:reset": "rm -rf .wrangler/state/v3/d1 && npm run db:migrate:local && npm run db:seed",
+    "db:console:local": "wrangler d1 execute trust-protocol-production --local",
+    "db:console:prod": "wrangler d1 execute trust-protocol-production",
+    "clean-port": "fuser -k 3001/tcp 2>/dev/null || true"
   },
   "dependencies": {
-    "hono": "^4.7.2"
+    "hono": "^4.13.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250320.0",
-    "@hono/vite-build": "^1.2.0",
-    "@hono/vite-dev-server": "^0.18.0",
-    "vite": "^6.2.2",
-    "wrangler": "^4.7.0"
+    "@cloudflare/workers-types": "4.20250705.0",
+    "@hono/vite-build": "^1.11.1",
+    "@hono/vite-dev-server": "^0.26.1",
+    "vite": "^8.1.4",
+    "wrangler": "^4.4.0"
   }
 }
